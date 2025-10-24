@@ -5,6 +5,9 @@ import { DashboardNav } from "@/components/DashboardNav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Droplets, Flame, Package, X } from "lucide-react";
+import ControleAgua from "./ControleAgua";
+import ControleGas from "./ControleGas";
+import EntregaMateriais from "./EntregaMateriais";
 
 type Tab = "dashboard" | "agua" | "gas" | "materiais" | "gestao" | "relatorio";
 type DashboardView = "geral" | "agua" | "gas" | "materiais";
@@ -131,7 +134,7 @@ const Index = () => {
                   </Card>
                 </div>
 
-                {/* Lista de Materiais */}
+                {/* Lista de Materiais por Tipo de Unidade */}
                 <Card>
                   <CardHeader>
                     <div className="flex justify-between items-center">
@@ -145,19 +148,83 @@ const Index = () => {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                      {/* Exemplo de cards de materiais */}
-                      {[1, 2, 3, 4, 5].map((item) => (
-                        <Card key={item} className="bg-muted/30 hover:bg-muted/50 cursor-pointer transition-colors">
-                          <CardContent className="p-4 text-center">
-                            <div className="h-16 flex items-center justify-center mb-2">
-                              <Package className="h-10 w-10 text-primary" />
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                      {/* CT */}
+                      <div>
+                        <h4 className="font-bold text-sm mb-3 text-semcas-blue border-b pb-2">CT</h4>
+                        <ul className="space-y-2">
+                          <li className="p-2 bg-yellow-50 border border-yellow-200 rounded">
+                            <strong className="text-sm">CT Centro</strong><br />
+                            <span className="text-xs text-muted-foreground">(Limpeza)</span>
+                            <div className="mt-1">
+                              <span className="px-2 py-0.5 bg-yellow-500 text-white rounded-full text-xs">⏳ Separando...</span>
                             </div>
-                            <p className="font-semibold text-sm">Material {item}</p>
-                            <p className="text-xs text-muted-foreground mt-1">Qtd: {Math.floor(Math.random() * 50) + 10}</p>
-                          </CardContent>
-                        </Card>
-                      ))}
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* SEDE */}
+                      <div>
+                        <h4 className="font-bold text-sm mb-3 text-semcas-blue border-b pb-2">SEDE</h4>
+                        <ul className="space-y-2">
+                          <li className="p-2 bg-blue-50 border border-blue-200 rounded">
+                            <strong className="text-sm">Almoxarifado Central</strong><br />
+                            <span className="text-xs text-muted-foreground">(Expediente)</span>
+                            <div className="mt-1">
+                              <span className="px-2 py-0.5 bg-purple-500 text-white rounded-full text-xs">📝 Requisitado</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* CRAS */}
+                      <div>
+                        <h4 className="font-bold text-sm mb-3 text-semcas-blue border-b pb-2">CRAS</h4>
+                        <ul className="space-y-2">
+                          <li className="p-2 bg-yellow-50 border border-yellow-200 rounded">
+                            <strong className="text-sm">CRAS Centro</strong><br />
+                            <span className="text-xs text-muted-foreground">(Alimento)</span>
+                            <div className="mt-1">
+                              <span className="px-2 py-0.5 bg-yellow-500 text-white rounded-full text-xs">⏳ Separando...</span>
+                            </div>
+                          </li>
+                          <li className="p-2 bg-green-50 border border-green-200 rounded">
+                            <strong className="text-sm">CRAS Sul</strong><br />
+                            <span className="text-xs text-muted-foreground">(Limpeza)</span>
+                            <div className="mt-1">
+                              <span className="px-2 py-0.5 bg-green-500 text-white rounded-full text-xs">✅ Pronto</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* CREAS */}
+                      <div>
+                        <h4 className="font-bold text-sm mb-3 text-semcas-blue border-b pb-2">CREAS</h4>
+                        <ul className="space-y-2">
+                          <li className="p-2 bg-yellow-50 border border-yellow-200 rounded">
+                            <strong className="text-sm">CREAS Norte</strong><br />
+                            <span className="text-xs text-muted-foreground">(Expediente)</span>
+                            <div className="mt-1">
+                              <span className="px-2 py-0.5 bg-yellow-500 text-white rounded-full text-xs">⏳ Separando...</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
+
+                      {/* ABRIGO */}
+                      <div>
+                        <h4 className="font-bold text-sm mb-3 text-semcas-blue border-b pb-2">ABRIGO</h4>
+                        <ul className="space-y-2">
+                          <li className="p-2 bg-green-50 border border-green-200 rounded">
+                            <strong className="text-sm">Abrigo Esperança</strong><br />
+                            <span className="text-xs text-muted-foreground">(Alimento)</span>
+                            <div className="mt-1">
+                              <span className="px-2 py-0.5 bg-green-500 text-white rounded-full text-xs">✅ Pronto</span>
+                            </div>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -302,38 +369,11 @@ const Index = () => {
         )}
 
         {/* Outras abas */}
-        {activeTab === "agua" && (
-          <div className="animate-fade-in">
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">Controle de Água</h3>
-                <p className="text-muted-foreground">Conteúdo da aba de Controle de Água será implementado aqui.</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        {activeTab === "agua" && <ControleAgua />}
 
-        {activeTab === "gas" && (
-          <div className="animate-fade-in">
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">Controle de Gás</h3>
-                <p className="text-muted-foreground">Conteúdo da aba de Controle de Gás será implementado aqui.</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        {activeTab === "gas" && <ControleGas />}
 
-        {activeTab === "materiais" && (
-          <div className="animate-fade-in">
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">Entrega de Materiais</h3>
-                <p className="text-muted-foreground">Conteúdo da aba de Entrega de Materiais será implementado aqui.</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        {activeTab === "materiais" && <EntregaMateriais />}
 
         {activeTab === "gestao" && (
           <div className="animate-fade-in">
