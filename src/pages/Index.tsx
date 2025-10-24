@@ -1,155 +1,316 @@
+import { useState } from "react";
 import { Header } from "@/components/Header";
-import { StatsGrid } from "@/components/StatsGrid";
-import { QuickStats } from "@/components/QuickStats";
+import { Navigation } from "@/components/Navigation";
+import { DashboardNav } from "@/components/DashboardNav";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Droplets, Flame, Package, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Droplets, Flame, Package, X } from "lucide-react";
+
+type Tab = "dashboard" | "agua" | "gas" | "materiais" | "gestao" | "relatorio";
+type DashboardView = "geral" | "agua" | "gas" | "materiais";
 
 const Index = () => {
-  // Dados de exemplo - você pode conectar isso ao seu Firebase
-  const aguaData = {
-    total: 1250,
+  const [activeTab, setActiveTab] = useState<Tab>("dashboard");
+  const [dashboardView, setDashboardView] = useState<DashboardView>("geral");
+
+  // Dados de exemplo
+  const estoqueAgua = 150;
+  const estoqueGas = 85;
+  const separacaoCount = 12;
+  const retiradaCount = 8;
+
+  const aguaStats = {
     pendente: 180,
     entregue: 1070,
+    recebido: 890,
   };
 
-  const gasData = {
-    total: 850,
+  const gasStats = {
     pendente: 95,
     entregue: 755,
+    recebido: 660,
   };
-
-  const materiaisData = {
-    total: 3420,
-  };
-
-  const quickStats = [
-    { label: "Água Pendente", value: aguaData.pendente, unit: "galões", trend: "up" as const },
-    { label: "Gás Pendente", value: gasData.pendente, unit: "botijões", trend: "down" as const },
-    { label: "Entregas Hoje", value: 45, trend: "up" as const },
-    { label: "Estoque Baixo", value: 12, unit: "itens", trend: "neutral" as const },
-  ];
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="container mx-auto px-4 py-6 md:py-8 lg:py-10">
-        {/* Título da Página */}
-        <div className="mb-6 md:mb-8">
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-2">
-            Dashboard de Controle
-          </h2>
-          <div className="flex items-center gap-2 text-sm md:text-base text-muted-foreground">
-            <Calendar className="h-4 w-4" />
-            <span>{new Date().toLocaleDateString("pt-BR", { 
-              weekday: "long", 
-              year: "numeric", 
-              month: "long", 
-              day: "numeric" 
-            })}</span>
+      {/* Sub-header com informações */}
+      <div className="bg-white shadow-sm border-b border-slate-200">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex justify-between items-center flex-wrap gap-4">
+            <div className="flex items-center gap-4">
+              <div className="bg-primary text-primary-foreground p-3 rounded-lg hidden sm:block">
+                <Package className="h-6 w-6" />
+              </div>
+              <div>
+                <h2 className="font-bold text-lg text-slate-800">Sistema de Almoxarifado</h2>
+                <p className="text-sm text-slate-500 mt-1">v.1.2 by Jurandy Santana</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4 text-sm">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 bg-secondary rounded-full animate-pulse-slow"></div>
+                <span className="text-muted-foreground">Conectado</span>
+              </div>
+              <p className="text-slate-500">Última atualização: há 2 min</p>
+            </div>
           </div>
         </div>
+      </div>
 
-        {/* Cards de Estatísticas Principais */}
-        <div className="mb-6 md:mb-8">
-          <StatsGrid agua={aguaData} gas={gasData} materiais={materiaisData} />
-        </div>
+      <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
 
-        {/* Estatísticas Rápidas */}
-        <div className="mb-6 md:mb-8">
-          <QuickStats stats={quickStats} />
-        </div>
+      <main className="container mx-auto p-4 sm:p-6 lg:p-8">
+        {/* Conteúdo do Dashboard */}
+        {activeTab === "dashboard" && (
+          <div className="animate-fade-in">
+            <div className="flex justify-between items-start mb-6 flex-wrap gap-4">
+              <div>
+                <h3 className="text-2xl font-bold text-slate-800">Visão Geral do Almoxarifado</h3>
+                <p className="text-sm text-slate-500 mt-1">A página atualiza automaticamente a cada 2 minutos.</p>
+              </div>
+              <DashboardNav activeView={dashboardView} onViewChange={setDashboardView} />
+            </div>
 
-        {/* Seção de Gráficos/Informações Adicionais */}
-        <div className="grid gap-6 grid-cols-1 lg:grid-cols-2">
-          {/* Card de Água */}
-          <Card className="animate-fade-in">
-            <CardHeader className="bg-gradient-to-r from-semcas-blue to-semcas-teal">
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Droplets className="h-5 w-5" />
-                Detalhes - Água
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center pb-3 border-b">
-                  <span className="text-sm font-medium text-muted-foreground">Total de Galões</span>
-                  <span className="text-xl font-bold text-foreground">{aguaData.total}</span>
+            {/* Visão Geral */}
+            {dashboardView === "geral" && (
+              <div className="space-y-6">
+                {/* Cards principais */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                  <Card className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="pb-3 bg-semcas-blue">
+                      <CardTitle className="flex items-center gap-2 text-sm font-medium text-white">
+                        <Droplets className="h-5 w-5" />
+                        Estoque de Água
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6 text-center">
+                      <p className="text-4xl font-bold text-semcas-blue">{estoqueAgua}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Galões Disponíveis</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="hover:shadow-lg transition-shadow">
+                    <CardHeader className="pb-3 bg-semcas-teal">
+                      <CardTitle className="flex items-center gap-2 text-sm font-medium text-white">
+                        <Flame className="h-5 w-5" />
+                        Estoque de Gás
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6 text-center">
+                      <p className="text-4xl font-bold text-orange-600">{estoqueGas}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Botijões Disponíveis</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer hover:scale-105 transform duration-200">
+                    <CardHeader className="pb-3 bg-semcas-yellow">
+                      <CardTitle className="flex items-center gap-2 text-sm font-medium text-white">
+                        <Package className="h-5 w-5" />
+                        Em Separação
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6 text-center">
+                      <p className="text-4xl font-bold text-yellow-600">{separacaoCount}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Registros pendentes</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="hover:shadow-lg transition-shadow cursor-pointer hover:scale-105 transform duration-200">
+                    <CardHeader className="pb-3 bg-semcas-green">
+                      <CardTitle className="flex items-center gap-2 text-sm font-medium text-white">
+                        <Package className="h-5 w-5" />
+                        Disponível p/ Retirada
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6 text-center">
+                      <p className="text-4xl font-bold text-green-600">{retiradaCount}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Registros prontos</p>
+                    </CardContent>
+                  </Card>
                 </div>
-                <div className="flex justify-between items-center pb-3 border-b">
-                  <span className="text-sm font-medium text-muted-foreground">Pendentes</span>
-                  <span className="text-xl font-bold text-yellow-600">{aguaData.pendente}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-muted-foreground">Entregues</span>
-                  <span className="text-xl font-bold text-secondary">{aguaData.entregue}</span>
+
+                {/* Lista de Materiais */}
+                <Card>
+                  <CardHeader>
+                    <div className="flex justify-between items-center">
+                      <CardTitle className="text-lg font-semibold text-slate-800">
+                        Materiais do Almoxarifado
+                      </CardTitle>
+                      <Button variant="outline" size="sm" className="hidden">
+                        <X className="w-4 h-4 mr-1" />
+                        Limpar Filtro
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                      {/* Exemplo de cards de materiais */}
+                      {[1, 2, 3, 4, 5].map((item) => (
+                        <Card key={item} className="bg-muted/30 hover:bg-muted/50 cursor-pointer transition-colors">
+                          <CardContent className="p-4 text-center">
+                            <div className="h-16 flex items-center justify-center mb-2">
+                              <Package className="h-10 w-10 text-primary" />
+                            </div>
+                            <p className="font-semibold text-sm">Material {item}</p>
+                            <p className="text-xs text-muted-foreground mt-1">Qtd: {Math.floor(Math.random() * 50) + 10}</p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {/* Visão de Água */}
+            {dashboardView === "agua" && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <Card>
+                    <CardContent className="pt-6 text-center">
+                      <h3 className="font-semibold text-slate-800 mb-2">Total Pendente (Saldo)</h3>
+                      <p className="text-4xl font-bold text-red-600">{aguaStats.pendente}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Galões com as unidades</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6 text-center">
+                      <h3 className="font-semibold text-slate-800 mb-2">Entregues (Últimos 30 dias)</h3>
+                      <p className="text-4xl font-bold text-semcas-blue">{aguaStats.entregue}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Galões cheios</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6 text-center">
+                      <h3 className="font-semibold text-slate-800 mb-2">Recebidos (Últimos 30 dias)</h3>
+                      <p className="text-4xl font-bold text-secondary">{aguaStats.recebido}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Galões vazios</p>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            )}
 
-          {/* Card de Gás */}
-          <Card className="animate-fade-in">
-            <CardHeader className="bg-gradient-to-r from-semcas-green to-semcas-lime">
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Flame className="h-5 w-5" />
-                Detalhes - Gás
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="space-y-4">
-                <div className="flex justify-between items-center pb-3 border-b">
-                  <span className="text-sm font-medium text-muted-foreground">Total de Botijões</span>
-                  <span className="text-xl font-bold text-foreground">{gasData.total}</span>
-                </div>
-                <div className="flex justify-between items-center pb-3 border-b">
-                  <span className="text-sm font-medium text-muted-foreground">Pendentes</span>
-                  <span className="text-xl font-bold text-yellow-600">{gasData.pendente}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-muted-foreground">Entregues</span>
-                  <span className="text-xl font-bold text-secondary">{gasData.entregue}</span>
+            {/* Visão de Gás */}
+            {dashboardView === "gas" && (
+              <div className="space-y-6 animate-fade-in">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                  <Card>
+                    <CardContent className="pt-6 text-center">
+                      <h3 className="font-semibold text-slate-800 mb-2">Total Pendente (Saldo)</h3>
+                      <p className="text-4xl font-bold text-red-600">{gasStats.pendente}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Botijões com as unidades</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6 text-center">
+                      <h3 className="font-semibold text-slate-800 mb-2">Entregues (Últimos 30 dias)</h3>
+                      <p className="text-4xl font-bold text-semcas-blue">{gasStats.entregue}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Botijões cheios</p>
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardContent className="pt-6 text-center">
+                      <h3 className="font-semibold text-slate-800 mb-2">Recebidos (Últimos 30 dias)</h3>
+                      <p className="text-4xl font-bold text-secondary">{gasStats.recebido}</p>
+                      <p className="text-sm text-muted-foreground mt-2">Botijões vazios</p>
+                    </CardContent>
+                  </Card>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            )}
 
-          {/* Card de Materiais */}
-          <Card className="animate-fade-in lg:col-span-2">
-            <CardHeader className="bg-gradient-to-r from-semcas-yellow to-semcas-green">
-              <CardTitle className="flex items-center gap-2 text-white">
-                <Package className="h-5 w-5" />
-                Resumo - Materiais
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-6">
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground mb-2">Total de Itens</p>
-                  <p className="text-3xl font-bold text-foreground">{materiaisData.total}</p>
-                </div>
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground mb-2">Categorias</p>
-                  <p className="text-3xl font-bold text-foreground">24</p>
-                </div>
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground mb-2">Em Estoque</p>
-                  <p className="text-3xl font-bold text-secondary">3,180</p>
-                </div>
-                <div className="text-center p-4 bg-muted/50 rounded-lg">
-                  <p className="text-sm text-muted-foreground mb-2">Estoque Baixo</p>
-                  <p className="text-3xl font-bold text-destructive">12</p>
-                </div>
+            {/* Visão de Materiais */}
+            {dashboardView === "materiais" && (
+              <div className="animate-fade-in">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg font-semibold text-slate-800">
+                      Materiais Pendentes
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      {[1, 2, 3, 4, 5].map((item) => (
+                        <div key={item} className="p-4 bg-muted/30 rounded-lg flex justify-between items-center hover:bg-muted/50 transition-colors">
+                          <div className="flex items-center gap-4">
+                            <Package className="h-8 w-8 text-primary" />
+                            <div>
+                              <p className="font-semibold">Material Exemplo {item}</p>
+                              <p className="text-sm text-muted-foreground">Unidade XYZ - Solicitado em {new Date().toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <p className="font-bold">15 unidades</p>
+                            <p className="text-xs text-yellow-600">Em separação</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-            </CardContent>
-          </Card>
-        </div>
+            )}
+          </div>
+        )}
 
-        {/* Footer Info */}
-        <div className="mt-8 text-center text-sm text-muted-foreground">
-          <p>Sistema de Controle de Almoxarifado - SEMCAS</p>
-          <p className="mt-1">Prefeitura de São Luís</p>
-        </div>
+        {/* Outras abas */}
+        {activeTab === "agua" && (
+          <div className="animate-fade-in">
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-2xl font-bold text-slate-800 mb-4">Controle de Água</h3>
+                <p className="text-muted-foreground">Conteúdo da aba de Controle de Água será implementado aqui.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {activeTab === "gas" && (
+          <div className="animate-fade-in">
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-2xl font-bold text-slate-800 mb-4">Controle de Gás</h3>
+                <p className="text-muted-foreground">Conteúdo da aba de Controle de Gás será implementado aqui.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {activeTab === "materiais" && (
+          <div className="animate-fade-in">
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-2xl font-bold text-slate-800 mb-4">Entrega de Materiais</h3>
+                <p className="text-muted-foreground">Conteúdo da aba de Entrega de Materiais será implementado aqui.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {activeTab === "gestao" && (
+          <div className="animate-fade-in">
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-2xl font-bold text-slate-800 mb-4">Gestão de Unidades</h3>
+                <p className="text-muted-foreground">Conteúdo da aba de Gestão de Unidades será implementado aqui.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+
+        {activeTab === "relatorio" && (
+          <div className="animate-fade-in">
+            <Card>
+              <CardContent className="pt-6">
+                <h3 className="text-2xl font-bold text-slate-800 mb-4">Gerar Relatório</h3>
+                <p className="text-muted-foreground">Conteúdo da aba de Gerar Relatório será implementado aqui.</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </main>
     </div>
   );
