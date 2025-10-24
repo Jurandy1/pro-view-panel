@@ -10,6 +10,7 @@ import ControleGas from "./ControleGas";
 import EntregaMateriais from "./EntregaMateriais";
 import GestaoUnidades from "./GestaoUnidades";
 import GerarRelatorio from "./GerarRelatorio";
+import { useFirebase } from "@/hooks/useFirebase";
 
 type Tab = "dashboard" | "agua" | "gas" | "materiais" | "gestao" | "relatorio";
 type DashboardView = "geral" | "agua" | "gas" | "materiais";
@@ -17,6 +18,7 @@ type DashboardView = "geral" | "agua" | "gas" | "materiais";
 const Index = () => {
   const [activeTab, setActiveTab] = useState<Tab>("dashboard");
   const [dashboardView, setDashboardView] = useState<DashboardView>("geral");
+  const { user, loading } = useFirebase();
 
   // Dados de exemplo
   const estoqueAgua = 150;
@@ -55,10 +57,18 @@ const Index = () => {
             </div>
             <div className="flex items-center gap-4 text-sm">
               <div className="flex items-center gap-2">
-                <div className="h-2 w-2 bg-secondary rounded-full animate-pulse-slow"></div>
-                <span className="text-muted-foreground">Conectado</span>
+                <div 
+                  className={`h-2 w-2 rounded-full ${
+                    loading ? "bg-yellow-500 animate-pulse" : user ? "bg-green-500" : "bg-red-500"
+                  }`}
+                ></div>
+                <span className="text-muted-foreground">
+                  {loading ? "Conectando..." : user ? "Firebase Conectado" : "Desconectado"}
+                </span>
               </div>
-              <p className="text-slate-500">Última atualização: há 2 min</p>
+              <p className="text-slate-500">
+                {user && `ID: ${user.uid.substring(0, 8)}...`}
+              </p>
             </div>
           </div>
         </div>
