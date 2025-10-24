@@ -228,23 +228,68 @@ const Index = () => {
                 <Card>
                   <CardHeader>
                     <CardTitle className="text-lg font-semibold text-slate-800">
-                      Materiais Pendentes
+                      Status dos Materiais
                     </CardTitle>
+                    <p className="text-sm text-muted-foreground mt-1">Controle de materiais requisitados e em processo de entrega</p>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-3">
-                      {[1, 2, 3, 4, 5].map((item) => (
-                        <div key={item} className="p-4 bg-muted/30 rounded-lg flex justify-between items-center hover:bg-muted/50 transition-colors">
+                      {/* Material Requisitado */}
+                      <div className="p-4 bg-blue-50 rounded-lg flex justify-between items-center border border-blue-200">
+                        <div className="flex items-center gap-4">
+                          <div className="bg-blue-500 p-2 rounded-lg">
+                            <Package className="h-6 w-6 text-white" />
+                          </div>
+                          <div>
+                            <p className="font-semibold text-slate-800">Material Alimentação</p>
+                            <p className="text-sm text-slate-600">CRAS Centro - Requisitado em {new Date().toLocaleDateString()}</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <span className="px-3 py-1 bg-blue-500 text-white rounded-full text-xs font-semibold">
+                            Requisitado
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Material Em Separação */}
+                      {[1, 2, 3].map((item) => (
+                        <div key={item} className="p-4 bg-yellow-50 rounded-lg flex justify-between items-center border border-yellow-200">
                           <div className="flex items-center gap-4">
-                            <Package className="h-8 w-8 text-primary" />
+                            <div className="bg-yellow-500 p-2 rounded-lg">
+                              <Package className="h-6 w-6 text-white" />
+                            </div>
                             <div>
-                              <p className="font-semibold">Material Exemplo {item}</p>
-                              <p className="text-sm text-muted-foreground">Unidade XYZ - Solicitado em {new Date().toLocaleDateString()}</p>
+                              <p className="font-semibold text-slate-800">Material de Limpeza</p>
+                              <p className="text-sm text-slate-600">CREAS {item} - Requisitado em {new Date().toLocaleDateString()}</p>
+                              <p className="text-xs text-yellow-700 mt-1">Separador: João Silva</p>
                             </div>
                           </div>
                           <div className="text-right">
-                            <p className="font-bold">15 unidades</p>
-                            <p className="text-xs text-yellow-600">Em separação</p>
+                            <span className="px-3 py-1 bg-yellow-500 text-white rounded-full text-xs font-semibold">
+                              Em Separação
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+
+                      {/* Material Disponível para Retirada */}
+                      {[1, 2].map((item) => (
+                        <div key={item} className="p-4 bg-green-50 rounded-lg flex justify-between items-center border border-green-200">
+                          <div className="flex items-center gap-4">
+                            <div className="bg-green-500 p-2 rounded-lg">
+                              <Package className="h-6 w-6 text-white" />
+                            </div>
+                            <div>
+                              <p className="font-semibold text-slate-800">Material de Expediente</p>
+                              <p className="text-sm text-slate-600">CRAS Sul {item} - Pronto desde {new Date().toLocaleDateString()}</p>
+                              <p className="text-xs text-green-700 mt-1">Separado por: Maria Santos</p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <span className="px-3 py-1 bg-green-500 text-white rounded-full text-xs font-semibold">
+                              Disponível p/ Retirada
+                            </span>
                           </div>
                         </div>
                       ))}
