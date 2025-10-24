@@ -13,6 +13,8 @@ import {
 import { Droplets, Trash2 } from "lucide-react";
 
 const ControleAgua = () => {
+  const [activeTab, setActiveTab] = useState<"movimentacao" | "entrada" | "previsao">("movimentacao");
+  const [activeFormTab, setActiveFormTab] = useState<"saida" | "entrada">("saida");
   const [formData, setFormData] = useState({
     unidade: "",
     tipo: "troca",
@@ -20,6 +22,12 @@ const ControleAgua = () => {
     qtdRetorno: 0,
     data: "",
     responsavel: "",
+  });
+  const [entradaFormData, setEntradaFormData] = useState({
+    quantidade: 0,
+    data: "",
+    responsavel: "",
+    notaFiscal: "",
   });
 
   // Dados de exemplo
@@ -41,54 +49,82 @@ const ControleAgua = () => {
     // Aqui você adicionaria a lógica para salvar no Firebase
   };
 
+  const handleEntradaSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Dados da entrada:", entradaFormData);
+    // Aqui você adicionaria a lógica para salvar no Firebase
+  };
+
   return (
     <div className="animate-fade-in space-y-6">
       <div className="flex flex-wrap gap-2 mb-6">
-        <Button variant="default">Lançamentos / Status</Button>
-        <Button variant="outline">Previsão</Button>
+        <Button 
+          variant={activeTab === "movimentacao" ? "default" : "outline"}
+          onClick={() => setActiveTab("movimentacao")}
+        >
+          Lançamentos / Status
+        </Button>
+        <Button 
+          variant={activeTab === "entrada" ? "default" : "outline"}
+          onClick={() => setActiveTab("entrada")}
+        >
+          Entrada de Estoque
+        </Button>
+        <Button 
+          variant={activeTab === "previsao" ? "default" : "outline"}
+          onClick={() => setActiveTab("previsao")}
+        >
+          Previsão
+        </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Card de Estoque */}
-        <Card className="lg:col-span-1 bg-blue-50 border-blue-200">
-          <CardHeader>
-            <CardTitle className="text-blue-800 flex items-center gap-2">
-              <Droplets className="h-5 w-5" />
-              Estoque de Água
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="space-y-3 text-sm">
-              <li className="flex justify-between items-center">
-                <span className="text-slate-600">Estoque Inicial:</span>
-                <strong className="text-lg">200</strong>
-              </li>
-              <li className="flex justify-between items-center">
-                <span className="text-slate-600">Total de Entradas:</span>
-                <strong className="text-lg text-green-600">+150</strong>
-              </li>
-              <li className="flex justify-between items-center">
-                <span className="text-slate-600">Total de Saídas:</span>
-                <strong className="text-lg text-red-600">-200</strong>
-              </li>
-              <li className="flex justify-between items-center text-lg font-bold border-t pt-2 mt-2 border-blue-200">
-                <span className="text-blue-900">Disponível:</span>
-                <strong className="text-2xl text-blue-900">150</strong>
-              </li>
-            </ul>
-          </CardContent>
-        </Card>
+      {activeTab === "movimentacao" && (
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          {/* Card de Estoque */}
+          <Card className="lg:col-span-1 bg-blue-50 border-blue-200">
+            <CardHeader>
+              <CardTitle className="text-blue-800 flex items-center gap-2">
+                <Droplets className="h-5 w-5" />
+                Estoque de Água
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-3 text-sm">
+                <li className="flex justify-between items-center">
+                  <span className="text-slate-600">Estoque Inicial:</span>
+                  <strong className="text-lg">200</strong>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span className="text-slate-600">Total de Entradas:</span>
+                  <strong className="text-lg text-green-600">+150</strong>
+                </li>
+                <li className="flex justify-between items-center">
+                  <span className="text-slate-600">Total de Saídas:</span>
+                  <strong className="text-lg text-red-600">-200</strong>
+                </li>
+                <li className="flex justify-between items-center text-lg font-bold border-t pt-2 mt-2 border-blue-200">
+                  <span className="text-blue-900">Disponível:</span>
+                  <strong className="text-2xl text-blue-900">150</strong>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
 
-        {/* Formulário de Movimentação */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="border-b">
-            <div className="flex gap-2">
-              <Button variant="default" size="sm">💧 Saída (Unidades)</Button>
-              <Button variant="outline" size="sm">📥 Entrada (Estoque)</Button>
-            </div>
-          </CardHeader>
-          <CardContent className="pt-6">
-            <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Formulário de Movimentação */}
+          <Card className="lg:col-span-1">
+            <CardHeader className="border-b">
+              <div className="flex gap-2">
+                <Button 
+                  variant={activeFormTab === "saida" ? "default" : "outline"} 
+                  size="sm"
+                  onClick={() => setActiveFormTab("saida")}
+                >
+                  💧 Saída (Unidades)
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="pt-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <Label htmlFor="unidade">Unidade (Apenas habilitadas)</Label>
                 <Select
@@ -182,11 +218,11 @@ const ControleAgua = () => {
               <Button type="submit" className="w-full">
                 Salvar Movimentação
               </Button>
-            </form>
-          </CardContent>
-        </Card>
+              </form>
+            </CardContent>
+          </Card>
 
-        {/* Tabela de Status */}
+          {/* Tabela de Status */}
         <Card className="lg:col-span-2">
           <CardHeader>
             <CardTitle>Status de Galões (Saldo nas Unidades)</CardTitle>
@@ -241,10 +277,118 @@ const ControleAgua = () => {
                   ))}
                 </tbody>
               </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {activeTab === "entrada" && (
+        <Card className="max-w-2xl mx-auto">
+          <CardHeader>
+            <CardTitle>Entrada de Estoque de Água</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Registre compras ou recebimentos de galões de água no almoxarifado
+            </p>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleEntradaSubmit} className="space-y-4">
+              <div>
+                <Label htmlFor="quantidadeEntrada">Quantidade de Galões</Label>
+                <Input
+                  id="quantidadeEntrada"
+                  type="number"
+                  min="1"
+                  placeholder="Ex: 50"
+                  value={entradaFormData.quantidade || ""}
+                  onChange={(e) =>
+                    setEntradaFormData({ ...entradaFormData, quantidade: parseInt(e.target.value) })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="dataEntrada">Data da Entrada</Label>
+                <Input
+                  id="dataEntrada"
+                  type="date"
+                  value={entradaFormData.data}
+                  onChange={(e) =>
+                    setEntradaFormData({ ...entradaFormData, data: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="responsavelEntrada">Responsável pelo Recebimento</Label>
+                <Input
+                  id="responsavelEntrada"
+                  placeholder="Nome do responsável"
+                  value={entradaFormData.responsavel}
+                  onChange={(e) =>
+                    setEntradaFormData({ ...entradaFormData, responsavel: e.target.value })
+                  }
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="notaFiscal">Nota Fiscal (opcional)</Label>
+                <Input
+                  id="notaFiscal"
+                  placeholder="Número da nota fiscal"
+                  value={entradaFormData.notaFiscal}
+                  onChange={(e) =>
+                    setEntradaFormData({ ...entradaFormData, notaFiscal: e.target.value })
+                  }
+                />
+              </div>
+
+              <Button type="submit" className="w-full">
+                Salvar Entrada
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      {activeTab === "previsao" && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Previsão de Consumo de Água</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Visualize projeções de consumo baseadas no histórico
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="unidadePrevisao">Selecione uma Unidade</Label>
+                  <Select>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Todas as unidades" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="todas">Todas as unidades</SelectItem>
+                      {unidades.map((unidade) => (
+                        <SelectItem key={unidade.id} value={unidade.id}>
+                          {unidade.nome}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 rounded-lg p-8 text-center border-2 border-dashed">
+                <p className="text-slate-500">
+                  Gráfico de previsão será exibido aqui baseado no histórico de consumo
+                </p>
+              </div>
             </div>
           </CardContent>
         </Card>
-      </div>
+      )}
     </div>
   );
 };

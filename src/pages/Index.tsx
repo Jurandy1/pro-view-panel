@@ -8,6 +8,8 @@ import { Droplets, Flame, Package, X } from "lucide-react";
 import ControleAgua from "./ControleAgua";
 import ControleGas from "./ControleGas";
 import EntregaMateriais from "./EntregaMateriais";
+import GestaoUnidades from "./GestaoUnidades";
+import GerarRelatorio from "./GerarRelatorio";
 
 type Tab = "dashboard" | "agua" | "gas" | "materiais" | "gestao" | "relatorio";
 type DashboardView = "geral" | "agua" | "gas" | "materiais";
@@ -368,34 +370,12 @@ const Index = () => {
           </div>
         )}
 
-        {/* Outras abas */}
+        {/* Conteúdo das outras abas */}
         {activeTab === "agua" && <ControleAgua />}
-
         {activeTab === "gas" && <ControleGas />}
-
         {activeTab === "materiais" && <EntregaMateriais />}
-
-        {activeTab === "gestao" && (
-          <div className="animate-fade-in">
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">Gestão de Unidades</h3>
-                <p className="text-muted-foreground">Conteúdo da aba de Gestão de Unidades será implementado aqui.</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {activeTab === "relatorio" && (
-          <div className="animate-fade-in">
-            <Card>
-              <CardContent className="pt-6">
-                <h3 className="text-2xl font-bold text-slate-800 mb-4">Gerar Relatório</h3>
-                <p className="text-muted-foreground">Conteúdo da aba de Gerar Relatório será implementado aqui.</p>
-              </CardContent>
-            </Card>
-          </div>
-        )}
+        {activeTab === "gestao" && <GestaoUnidades />}
+        {activeTab === "relatorio" && <GerarRelatorio />}
       </main>
     </div>
   );
